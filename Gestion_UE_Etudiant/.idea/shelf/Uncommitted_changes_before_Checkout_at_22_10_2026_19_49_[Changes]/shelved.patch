@@ -1,0 +1,224 @@
+Index: ../GraphQL/target/classes/schema.graphql
+===================================================================
+diff --git a/../GraphQL/target/classes/schema.graphql b/../GraphQL/target/classes/schema.graphql
+deleted file mode 100644
+--- a/../GraphQL/target/classes/schema.graphql	(revision d490010ebc617d65a68a540136932870e058b3e4)
++++ /dev/null	(revision d490010ebc617d65a68a540136932870e058b3e4)
+@@ -1,26 +0,0 @@
+-type UniteEnseignement {
+-    code: Int
+-    domaine: String
+-    responsable: String
+-    credits: Int
+-    semestre: Int
+-}
+-type QueryResolver {
+-    allUEs: [UniteEnseignement]
+-}
+-
+-
+-type MutationResolver {
+-    addUniteEnseignement(
+-        code: Int!
+-        domaine: String!
+-        responsable: String!
+-        credits: Int!
+-        semestre: Int!
+-    ): Boolean
+-
+-}
+-schema {
+-    query: QueryResolver
+-    mutation: MutationResolver
+-}
+Index: ../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/META-INF/MANIFEST.MF
+===================================================================
+diff --git a/../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/META-INF/MANIFEST.MF b/../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/META-INF/MANIFEST.MF
+deleted file mode 100644
+--- a/../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/META-INF/MANIFEST.MF	(revision d490010ebc617d65a68a540136932870e058b3e4)
++++ /dev/null	(revision d490010ebc617d65a68a540136932870e058b3e4)
+@@ -1,5 +0,0 @@
+-Manifest-Version: 1.0
+-Created-By: IntelliJ IDEA
+-Built-By: hp
+-Build-Jdk: Amazon Corretto 17.0.13
+-
+Index: ../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/WEB-INF/classes/schema.graphql
+===================================================================
+diff --git a/../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/WEB-INF/classes/schema.graphql b/../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/WEB-INF/classes/schema.graphql
+deleted file mode 100644
+--- a/../GraphQL/target/GraphQlLogement-0.0.1-SNAPSHOT/WEB-INF/classes/schema.graphql	(revision d490010ebc617d65a68a540136932870e058b3e4)
++++ /dev/null	(revision d490010ebc617d65a68a540136932870e058b3e4)
+@@ -1,26 +0,0 @@
+-type UniteEnseignement {
+-    code: Int
+-    domaine: String
+-    responsable: String
+-    credits: Int
+-    semestre: Int
+-}
+-type QueryResolver {
+-    allUEs: [UniteEnseignement]
+-}
+-
+-
+-type MutationResolver {
+-    addUniteEnseignement(
+-        code: Int!
+-        domaine: String!
+-        responsable: String!
+-        credits: Int!
+-        semestre: Int!
+-    ): Boolean
+-
+-}
+-schema {
+-    query: QueryResolver
+-    mutation: MutationResolver
+-}
+Index: ../GraphQL/src/main/resources/schema.graphql
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>type UniteEnseignement {\r\n    code: Int\r\n    domaine: String\r\n    responsable: String\r\n    credits: Int\r\n    semestre: Int\r\n}\r\ntype QueryResolver {\r\n    allUEs: [UniteEnseignement]\r\n}\r\n\r\n\r\ntype MutationResolver {\r\n    addUniteEnseignement(\r\n        code: Int!\r\n        domaine: String!\r\n        responsable: String!\r\n        credits: Int!\r\n        semestre: Int!\r\n    ): Boolean\r\n\r\n}\r\nschema {\r\n    query: QueryResolver\r\n    mutation: MutationResolver\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../GraphQL/src/main/resources/schema.graphql b/../GraphQL/src/main/resources/schema.graphql
+--- a/../GraphQL/src/main/resources/schema.graphql	(revision d490010ebc617d65a68a540136932870e058b3e4)
++++ b/../GraphQL/src/main/resources/schema.graphql	(date 1792682556779)
+@@ -1,16 +1,62 @@
++enum TypeModule {
++    TRANSVERSAL
++    PROFESSIONNEL
++    RECHERCHE
++}
++
+ type UniteEnseignement {
+-    code: Int
++    code: Int!
+     domaine: String
+     responsable: String
+     credits: Int
+     semestre: Int
+ }
++
++type Module {
++    matricule: String!
++    nom: String
++    coefficient: Int
++    volumeHoraire: Int
++    type: TypeModule
++    uniteEnseignement: UniteEnseignement
++}
++
+ type QueryResolver {
++    # Modules
++    allModules: [Module]
++    modulesByType(type: TypeModule!): [Module]
++    moduleByMatricule(matricule: String!): Module
++
++    # Unités d'enseignement
+     allUEs: [UniteEnseignement]
++    ueByCode(code: Int!): UniteEnseignement
++    uesByDomaine(domaine: String!): [UniteEnseignement]
++    uesBySemestre(semestre: Int!): [UniteEnseignement]
+ }
+-
+ 
+ type MutationResolver {
++    # Modules
++    addModule(
++        matricule: String!
++        libelle: String!
++        coef: Int!
++        volumeHoraire: Int!
++        type: TypeModule!
++        codeUE: Int!
++    ): Boolean
++
++    updateModule(
++        matricule: String!
++        libelle: String
++        coef: Int
++        volumeHoraire: Int
++        type: TypeModule
++        codeUE: Int
++    ): Module
++
++    deleteModule(matricule: String!): String
++
++    # Unités d'enseignement
+     addUniteEnseignement(
+         code: Int!
+         domaine: String!
+@@ -19,8 +65,18 @@
+         semestre: Int!
+     ): Boolean
+ 
++    updateUniteEnseignement(
++        code: Int!
++        domaine: String
++        responsable: String
++        credits: Int
++        semestre: Int
++    ): UniteEnseignement
++
++    deleteUniteEnseignement(code: Int!): String
+ }
++
+ schema {
+     query: QueryResolver
+     mutation: MutationResolver
+-}
++}
+\ No newline at end of file
+Index: ../GraphQL/.idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"VcsDirectoryMappings\">\r\n    <mapping directory=\"$PROJECT_DIR$\" vcs=\"Git\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../GraphQL/.idea/vcs.xml b/../GraphQL/.idea/vcs.xml
+--- a/../GraphQL/.idea/vcs.xml	(revision d490010ebc617d65a68a540136932870e058b3e4)
++++ b/../GraphQL/.idea/vcs.xml	(date 1792677046843)
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: ../GraphQL/src/main/java/graphql/MutationResolver.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package graphql;\r\n\r\n// Import the business logic class responsible for managing \"UniteEnseignement\" data\r\nimport business.UniteEnseignementBusiness;\r\n\r\n// Import the GraphQL library class used to define the root of GraphQL mutations\r\nimport com.coxautodev.graphql.tools.GraphQLRootResolver;\r\n\r\n// Import the entity class representing a Teaching Unit (Unité d’Enseignement)\r\nimport entities.UniteEnseignement;\r\n\r\n/**\r\n * This class defines all GraphQL mutations related to the \"UniteEnseignement\" entity.\r\n * A mutation in GraphQL is used to perform write operations (create, update, delete)\r\n * as opposed to queries, which are for read operations.\r\n */\r\npublic class MutationResolver implements GraphQLRootResolver {\r\n\r\n    // Attribute used to access the business logic (service layer)\r\n    public UniteEnseignementBusiness helper;\r\n\r\n    /**\r\n     * Constructor of the resolver.\r\n     * It initializes the business helper that manages the teaching units.\r\n     */\r\n    public MutationResolver() {\r\n        helper = new UniteEnseignementBusiness();\r\n    }\r\n\r\n    /**\r\n     * GraphQL Mutation: addUniteEnseignement\r\n     *\r\n     * This method allows clients to add a new \"Unité d’Enseignement\" to the system.\r\n     *\r\n     * When a GraphQL mutation like the following is executed:\r\n     *\r\n     * mutation {\r\n     *     addUniteEnseignement(\r\n     *         code: 101,\r\n     *         domaine: \"Informatique\",\r\n     *         responsable: \"Dr. Smith\",\r\n     *         credits: 4,\r\n     *         semestre: 2\r\n     *     )\r\n     * }\r\n     *\r\n     * GraphQL calls this Java method to create and save a new teaching unit.\r\n     */\r\n    public boolean addUniteEnseignement(int code, String domaine, String responsable, int credits, int semestre) {\r\n        // Create a new UniteEnseignement object with the provided parameters\r\n        UniteEnseignement ue = new UniteEnseignement(code, domaine, responsable, credits, semestre);\r\n\r\n        // Call the business logic method to add the new unit\r\n        // The helper handles the actual persistence or logic of adding the entity\r\n        return helper.addUniteEnseignement(ue);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../GraphQL/src/main/java/graphql/MutationResolver.java b/../GraphQL/src/main/java/graphql/MutationResolver.java
+--- a/../GraphQL/src/main/java/graphql/MutationResolver.java	(revision d490010ebc617d65a68a540136932870e058b3e4)
++++ b/../GraphQL/src/main/java/graphql/MutationResolver.java	(date 1792683365428)
+@@ -18,6 +18,7 @@
+ 
+     // Attribute used to access the business logic (service layer)
+     public UniteEnseignementBusiness helper;
++    public ModuleBusiness moduleHelper = new ModuleBusiness();
+ 
+     /**
+      * Constructor of the resolver.
+@@ -54,4 +55,12 @@
+         // The helper handles the actual persistence or logic of adding the entity
+         return helper.addUniteEnseignement(ue);
+     }
++    public boolean addModule(String matricule, String libelle, int coef,
++                             int volumeHoraire, TypeModule type, int codeUE) {
++        // Create a new Module object with the provided parameters
++        Module module = new Module(matricule, libelle, coef, volumeHoraire, type, codeUE);
++
++        // Delegate persistence/logic to the business layer
++        return helper.addModule(module);
++    }
+ }

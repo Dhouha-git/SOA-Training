@@ -1,0 +1,8 @@
+entities\Module$TypeModule.class
+metiers\UniteEnseignementBusiness.class
+webservices\ApplicationMain.class
+metiers\ModuleBusiness.class
+webservices\UniteEnsRestApi.class
+entities\UniteEnseignement.class
+entities\Module.class
+webservices\HelloRessources.class
