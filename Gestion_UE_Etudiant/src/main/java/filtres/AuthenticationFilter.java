@@ -81,6 +81,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             String keyString = "simplekey";
             Key key = new SecretKeySpec(keyString.getBytes(), 0, keyString.getBytes().length, "DES");
             System.out.println("the key is : " + key);
+
             System.out.println("test:" + Jwts.parser().setSigningKey(key).parseClaimsJws(token));
             System.out.println("#### valid token : " + token);
 

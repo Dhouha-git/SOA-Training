@@ -1,4 +1,4 @@
-package webservices;
+package ressources;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,7 +23,7 @@ import java.util.Date;
  */
 
 
-@Path("/authentification")
+@Path("authentification")
 public class AuthenticationEndPoint {
 
     // ======================================
@@ -37,12 +37,11 @@ public class AuthenticationEndPoint {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 
-    // @Produces(MediaType.TEXT_PLAIN)
+
     // @Consumes(MediaType.APPLICATION_JSON)
 
     //// this is a first alternative (with formParam)
-    public Response authenticateUser(@FormParam("username") String username,
-                                     @FormParam("password") String password) {
+    public Response authenticateUser(@FormParam("username") String username, @FormParam("password") String password) {
         //// this is a second alternative (with the Credentials class)
         // public Response authenticateUser(Credentials cred) {
         try {

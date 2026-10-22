@@ -5,7 +5,7 @@ public class Module {
     private String nom;
     private int coefficient;
     private int volumeHoraire;
-    private TypeModule type;
+    private TypeModule typeM;
     private UniteEnseignement uniteEnseignement; // Référence vers l'UE associée
 
     public Module(){}
@@ -15,17 +15,17 @@ public class Module {
         this.nom = nom;
         this.coefficient = coefficient;
         this.volumeHoraire = volumeHoraire;
-        this.type = type;
+        this.typeM = type;
     }
     public Module(String matricule, String nom, int coefficient, int volumeHoraire, TypeModule type,UniteEnseignement uniteEnseignement) {
         this.matricule = matricule;
         this.nom = nom;
         this.coefficient = coefficient;
         this.volumeHoraire = volumeHoraire;
-        this.type = type;
+        this.typeM = type;
         this.uniteEnseignement=uniteEnseignement;
     }
-    // Enumération TypeModule
+
     public enum TypeModule {
         TRANSVERSAL,
         PROFESSIONNEL,
@@ -65,12 +65,12 @@ public class Module {
         this.volumeHoraire = volumeHoraire;
     }
 
-    public TypeModule getType() {
-        return type;
+    public TypeModule getTypeM() {
+        return typeM;
     }
 
-    public void setType(TypeModule type) {
-        this.type = type;
+    public void setTypeM(TypeModule typeM) {
+        this.typeM = typeM;
     }
 
     public UniteEnseignement getUniteEnseignement() {
