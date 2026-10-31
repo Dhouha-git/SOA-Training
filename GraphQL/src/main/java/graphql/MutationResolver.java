@@ -1,57 +1,70 @@
 package graphql;
 
-// Import the business logic class responsible for managing "UniteEnseignement" data
-import business.UniteEnseignementBusiness;
-
-// Import the GraphQL library class used to define the root of GraphQL mutations
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
-
-// Import the entity class representing a Teaching Unit (Unité d’Enseignement)
+import entities.Module;
 import entities.UniteEnseignement;
+import repository.ModuleBusiness;
+import repository.UniteEnseignementBusiness;
 
-/**
- * This class defines all GraphQL mutations related to the "UniteEnseignement" entity.
- * A mutation in GraphQL is used to perform write operations (create, update, delete)
- * as opposed to queries, which are for read operations.
- */
 public class MutationResolver implements GraphQLRootResolver {
 
-    // Attribute used to access the business logic (service layer)
     public UniteEnseignementBusiness helper;
+    public ModuleBusiness moduleHelper;
 
-    /**
-     * Constructor of the resolver.
-     * It initializes the business helper that manages the teaching units.
-     */
     public MutationResolver() {
         helper = new UniteEnseignementBusiness();
+        moduleHelper = new ModuleBusiness();
     }
 
-    /**
-     * GraphQL Mutation: addUniteEnseignement
-     *
-     * This method allows clients to add a new "Unité d’Enseignement" to the system.
-     *
-     * When a GraphQL mutation like the following is executed:
-     *
-     * mutation {
-     *     addUniteEnseignement(
-     *         code: 101,
-     *         domaine: "Informatique",
-     *         responsable: "Dr. Smith",
-     *         credits: 4,
-     *         semestre: 2
-     *     )
-     * }
-     *
-     * GraphQL calls this Java method to create and save a new teaching unit.
-     */
-    public boolean addUniteEnseignement(int code, String domaine, String responsable, int credits, int semestre) {
-        // Create a new UniteEnseignement object with the provided parameters
-        UniteEnseignement ue = new UniteEnseignement(code, domaine, responsable, credits, semestre);
+    // ----- Modules -----
+    public boolean addModule(String matricule, String libelle, int coef, int volumeHoraire,
+                             Module.TypeModule type, int codeUE) {
+        UniteEnseignement ueRef = new UniteEnseignement(codeUE, null, null, 0, 0);
+        Module module = new Module(matricule, libelle, coef, volumeHoraire, type, ueRef);
+        return moduleHelper.addModule(module); // false si l'UE n'existe pas
+    }
 
-        // Call the business logic method to add the new unit
-        // The helper handles the actual persistence or logic of adding the entity
+    public Module updateModule(String matricule, String libelle, Integer coef, Integer volumeHoraire,
+                               Module.TypeModule type, Integer codeUE) {
+        Module m = moduleHelper.getModuleByMatricule(matricule);
+        if (m == null) return null;
+
+        if (libelle != null)       m.setNom(libelle);
+        if (coef != null)          m.setCoefficient(coef);
+        if (volumeHoraire != null) m.setVolumeHoraire(volumeHoraire);
+        if (type != null)          m.setType(type);
+        if (codeUE != null) {
+            UniteEnseignement ue = helper.getUEByCode(codeUE);
+            if (ue != null) m.setUniteEnseignement(ue);
+        }
+        moduleHelper.updateModule(matricule, m);
+        return m;
+    }
+
+    public String deleteModule(String matricule) {
+        return moduleHelper.deleteModule(matricule) ? "deleted successfully" : "module not found";
+    }
+
+    // ----- Unités d'enseignement -----
+    public boolean addUniteEnseignement(int code, String domaine, String responsable, int credits, int semestre) {
+        UniteEnseignement ue = new UniteEnseignement(code, domaine, responsable, credits, semestre);
         return helper.addUniteEnseignement(ue);
+    }
+
+    public UniteEnseignement updateUniteEnseignement(int code, String domaine, String responsable,
+                                                     Integer credits, Integer semestre) {
+        UniteEnseignement ue = helper.getUEByCode(code);
+        if (ue == null) return null;
+
+        if (domaine != null)     ue.setDomaine(domaine);
+        if (responsable != null) ue.setResponsable(responsable);
+        if (credits != null)     ue.setCredits(credits);
+        if (semestre != null)    ue.setSemestre(semestre);
+        helper.updateUniteEnseignement(code, ue);
+        return ue;
+    }
+
+    public String deleteUniteEnseignement(int code) {
+        return helper.deleteUniteEnseignement(code) ? "deleted successfully" : "UE not found";
     }
 }
